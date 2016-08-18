@@ -95,8 +95,10 @@ int resetMenuPos() {
 	return 0;
 }
 
+struct menuItem_s *gCurMenuItem;
+
 int moveMenu(struct menuItem_s *start, int dir) {
-	struct menuItem_s *item, *prev = NULL, *toMark = NULL;
+	struct menuItem_s *item, *prev = NULL;
 	item = start;
 	while (item != NULL) {
 		if (item->isActive || item->isEnabled)
@@ -113,17 +115,17 @@ int moveMenu(struct menuItem_s *start, int dir) {
 	if (dir < 0) {
 		if (prev == NULL)
 			return 0;
-		toMark = prev;
+		gCurMenuItem = prev;
 	} else {
 		if (item->next == NULL)
 			return 0;
-		toMark = item->next;
+		gCurMenuItem = item->next;
 	}
 	// un-mark the current item.
 	item->isActive = 0;
 	item->isEnabled = 0;
 
-	toMark->isActive = 1;
+	gCurMenuItem->isActive = 1;
 	return 1;
 }
 
@@ -169,6 +171,12 @@ int moveMenuVertical(int dir) {
 		sub = item->subList;
 		if (moveMenu(sub, dir)) {
 			item->isActive = 0;
+		} else if (dir < 0){
+			// not able to move any more up,
+			// fold menu.
+			item->isActive = 1;
+			item->isEnabled = 0;
+			resetList(sub);
 		}
 	}
 	return 0;
@@ -177,7 +185,7 @@ void menuNavigate(int key) {
 
 	switch (key) {
 	case 'b':
-		// TODO reset menuItem_s list
+		resetMenuPos();
 		break;
 	case 'w':
 	case KEY_UP:
@@ -195,6 +203,15 @@ void menuNavigate(int key) {
 	case KEY_RIGHT:
 		moveMenuHorizontal(1);
 		break;
+	case 10:
+		// call active menu's handler.
+		// if menu item has a sub menu,
+		// then the it has to be un-folded.
+		if (gCurMenuItem->hasSubMenu) {
+			moveMenuVertical(1);
+		} else if (gCurMenuItem->handler != NULL){
+			gCurMenuItem->handler(0);
+		}
 	default:
 		logPrint("Got to dfl %d\n", key);
 	}

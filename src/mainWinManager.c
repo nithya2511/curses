@@ -48,6 +48,7 @@ int updateMainWin() {
 		menuNavigate(ch);
 		//printMenuGraph();
 		displayMenu(mainWin);
+		//printMenuGraph();
 		break;
 	case MWS_PRINT:
 		break;

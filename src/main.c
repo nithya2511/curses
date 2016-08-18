@@ -6,12 +6,20 @@
 #include "menu.h"
 #include "mainWinManager.h"
 
+int exitProgram(int param)
+{
+	destroyMainWin();
+	endwin();
+	exit(0);
+	return 0;
+}
+
 void initMenuEntries() {
 	logPrint("entered menu entries\n");
 	registerMenuItem("File", NULL);
 	registerSubMenu("File", "New", NULL);
 	registerSubMenu("File", "Open", NULL);
-	registerSubMenu("File", "Quit", NULL);
+	registerSubMenu("File", "Quit", exitProgram);
 	registerMenuItem("Edit", NULL);
 	registerSubMenu("Edit", "Undo", NULL);
 	registerSubMenu("Edit", "Redo", NULL);
