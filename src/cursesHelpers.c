@@ -6,6 +6,7 @@
 int createWindow(WINDOW **newWin, int y, int x)
 {
 	*newWin = newwin(50, 50, 0, 0);
+	logPrint("new window created\n");
 	if (*newWin == NULL)
 		return -1;
 	return 0;
@@ -37,8 +38,6 @@ void logPrint(const char *fmt, ...)
 		logBuf[128-1] = 0;
 		len = 128-1;
 	}
-	//printf("log: %s", logBuf);
-	//fwrite(logBuf, 1, len, logFile);
 	fprintf(logFile, logBuf);
 	fflush(logFile);
 }

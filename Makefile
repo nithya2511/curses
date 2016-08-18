@@ -1,6 +1,6 @@
 
 CFLAGS=-Wall -Wshadow
-OBJS=obj/main.o obj/cursesHelpers.o obj/menu.o obj/list.o
+OBJS=obj/main.o obj/cursesHelpers.o obj/menu.o obj/list.o obj/mainWinManager.o
 INC=-Isrc
 DEF=
 LIB=-lncurses
