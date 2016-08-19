@@ -108,23 +108,21 @@ int moveMenu(struct menuItem_s *start, int dir) {
 	}
 	if (item == NULL) {
 		// This is only for the first run when nothing is active.
-		start->isActive = 1;
-		return 1;
-	}
-
-	if (dir < 0) {
-		if (prev == NULL)
-			return 0;
-		gCurMenuItem = prev;
+		gCurMenuItem = start;
 	} else {
-		if (item->next == NULL)
-			return 0;
-		gCurMenuItem = item->next;
+		if (dir < 0) {
+			if (prev == NULL)
+				return 0;
+			gCurMenuItem = prev;
+		} else {
+			if (item->next == NULL)
+				return 0;
+			gCurMenuItem = item->next;
+		}
+		// un-mark the current item.
+		item->isActive = 0; // this is now the previous
+		item->isEnabled = 0; // menu. So deactivate it.
 	}
-	// un-mark the current item.
-	item->isActive = 0;
-	item->isEnabled = 0;
-
 	gCurMenuItem->isActive = 1;
 	return 1;
 }
@@ -149,6 +147,7 @@ int moveMenuHorizontal(int dir) {
 }
 
 int moveMenuVertical(int dir) {
+	logPrint("entered vertical menu\n");
 	if (gMenuList == NULL)
 		return -1; // list is empty.
 
@@ -204,14 +203,20 @@ void menuNavigate(int key) {
 		moveMenuHorizontal(1);
 		break;
 	case 10:
+		logPrint("ENTER entered\n");
 		// call active menu's handler.
 		// if menu item has a sub menu,
 		// then the it has to be un-folded.
-		if (gCurMenuItem->hasSubMenu) {
+		if (gCurMenuItem == NULL)
+			break;
+
+		if (gCurMenuItem->hasSubMenu && gCurMenuItem->isActive) {
+			logPrint("cur menu status %d\n", gCurMenuItem->isActive);
 			moveMenuVertical(1);
 		} else if (gCurMenuItem->handler != NULL){
 			gCurMenuItem->handler(0);
 		}
+		break;
 	default:
 		logPrint("Got to dfl %d\n", key);
 	}

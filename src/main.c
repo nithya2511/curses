@@ -5,14 +5,7 @@
 #include "cursesHelpers.h"
 #include "menu.h"
 #include "mainWinManager.h"
-
-int exitProgram(int param)
-{
-	destroyMainWin();
-	endwin();
-	exit(0);
-	return 0;
-}
+#include "handler.h"
 
 void initMenuEntries() {
 	logPrint("entered menu entries\n");
@@ -28,13 +21,15 @@ void initMenuEntries() {
 	registerSubMenu("View", "Print", NULL);
 	registerMenuItem("Help", NULL);
 	registerSubMenu("Help", "About", NULL);
-	registerSubMenu("Help", "Author", NULL);
+	registerSubMenu("Help", "Author", authorProg);
 }
 
 int main() {
 	initscr();
 	cbreak();
 	noecho();
+	curs_set(0);
+
 
 	logInit();
 	initMenuEntries();
@@ -43,6 +38,9 @@ int main() {
 	while (1) {
 		if (updateMainWin() < 0)
 			break;
+		int count;
+		count++;
+		logPrint("count : %d", count);
 	}
 	destroyMainWin();
 	endwin();

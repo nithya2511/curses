@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int createWindow(WINDOW **newWin, int y, int x)
+int createWindow(WINDOW **newWin, int row,int col, int start_x, int start_y)
 {
-	*newWin = newwin(50, 50, 0, 0);
+	*newWin = newwin(row, col, start_x,start_y);
 	logPrint("new window created\n");
 	if (*newWin == NULL)
 		return -1;

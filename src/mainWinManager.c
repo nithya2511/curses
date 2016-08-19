@@ -10,14 +10,14 @@
 #include "menu.h"
 
 enum {
-	MWS_IDLE, MWS_MENU_NAV, MWS_PRINT,
+	MSW_INIT, MWS_IDLE, MWS_MENU_NAV, MWS_PRINT,
 };
-
+int show = 0;
 WINDOW *mainWin = NULL;
-int mainWinState = MWS_IDLE;
+int mainWinState = MSW_INIT;
 
 void initMainWindow() {
-	createWindow(&mainWin, 50, 50);
+	createWindow(&mainWin, 100, 100, 0, 0);
 	if (mainWin == NULL) {
 		logPrint("Failed to create main window\n");
 		exit(-1);
@@ -31,22 +31,23 @@ void initMainWindow() {
 int updateMainWin() {
 	int ch = 0;
 	switch (mainWinState) {
+	case MSW_INIT:
+		resetMenuPos();
+		displayMenu(mainWin);
+		mainWinState = MWS_IDLE;
+		break;
 	case MWS_IDLE:
+		logPrint("Waiting for command to begin or quit\n");
 		ch = wgetch(mainWin);
-		if (ch == 'q' || ch == 'Q')
-			return -1; // exit the main loop.
 		if (ch == 'b' || ch == 'B') {
+			moveMenuHorizontal(1);// highlight the first menu item in the first run.
+			displayMenu(mainWin);
 			mainWinState = MWS_MENU_NAV;
-			resetMenuPos();
 		}
 		break;
 	case MWS_MENU_NAV:
 		ch = wgetch(mainWin);
-		if (ch == 10)
-			return 0;
-
 		menuNavigate(ch);
-		//printMenuGraph();
 		displayMenu(mainWin);
 		//printMenuGraph();
 		break;
