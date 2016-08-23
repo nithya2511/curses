@@ -166,6 +166,10 @@ int moveMenuVertical(int dir) {
 	}
 
 	if (item->hasSubMenu) {
+		if((item->isEnabled != 1) && (dir != 1)) {
+			if(dir == -1)
+				return 0;
+		}
 		item->isEnabled = 1;
 		sub = item->subList;
 		if (moveMenu(sub, dir)) {
@@ -174,6 +178,7 @@ int moveMenuVertical(int dir) {
 			// not able to move any more up,
 			// fold menu.
 			item->isActive = 1;
+			gCurMenuItem = item;
 			item->isEnabled = 0;
 			resetList(sub);
 		}
@@ -207,13 +212,11 @@ void menuNavigate(int key) {
 		// call active menu's handler.
 		// if menu item has a sub menu,
 		// then the it has to be un-folded.
-		if (gCurMenuItem == NULL)
 			break;
-
-		if (gCurMenuItem->hasSubMenu && gCurMenuItem->isActive) {
-			logPrint("cur menu status %d\n", gCurMenuItem->isActive);
+		}
+		if (gCurMenuItem->hasSubMenu || gCurMenuItem->isActive) {
 			moveMenuVertical(1);
-		} else if (gCurMenuItem->handler != NULL){
+		}  else if (gCurMenuItem->handler != NULL) {
 			gCurMenuItem->handler(0);
 		}
 		break;
@@ -226,7 +229,7 @@ void menuNavigate(int key) {
 void printMenuGraph() {
 	struct menuItem_s *sub, *item;
 	item = (struct menuItem_s *) gMenuList;
-	 system("clear");
+	system("clear");
 	while (item != NULL) {
 		if (item->isActive)
 			printf("[");

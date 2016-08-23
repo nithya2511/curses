@@ -38,9 +38,6 @@ int main() {
 	while (1) {
 		if (updateMainWin() < 0)
 			break;
-		int count;
-		count++;
-		logPrint("count : %d", count);
 	}
 	destroyMainWin();
 	endwin();
